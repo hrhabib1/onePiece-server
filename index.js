@@ -28,6 +28,9 @@ async function run() {
     await client.connect();
 
     const addSellPosts = client.db('addPost').collection('item');
+    const orderCollection = client.db('addPost').collection('orders');
+
+
     app.post('/addSellPost', async(req, res) =>{
         const addSellPost = req.body;
         console.log(addSellPost);
@@ -49,6 +52,22 @@ async function run() {
         };
 
         const result = await addSellPosts.findOne(query, options);
+        res.send(result);
+      })
+
+      // order
+      app.post('/orders', async(req, res) =>{
+        const addOrder = req.body;
+        console.log(addOrder);
+        const result = await orderCollection.insertOne(addOrder);
+        res.send(result);
+      })
+      app.get('/orders', async(req, res) =>{
+        let query = {};
+        if(req.query?.email){
+          query = {email: req.query.email}
+        }
+        const result = await orderCollection.find(query).toArray();
         res.send(result);
       })
 
